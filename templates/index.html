@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 Stock Analysis Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --success-color: #27AE60;
+            --danger-color: #E74C3C;
+            --warning-color: #F39C12;
+            --dark-color: #1A1A1A;
+            --light-color: #ECF0F1;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --shadow-1: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-2: 0 5px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 15px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            box-shadow: var(--shadow-2);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--gradient-1);
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-1);
+            margin: -2rem auto 3rem;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .ticker-input {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .ticker-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            outline: none;
+        }
+
+        .analyze-btn {
+            background: var(--gradient-3);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-2);
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+            color: white;
+        }
+
+        .features-section {
+            padding: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-2);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon.icon-1 { background: var(--gradient-1); }
+        .feature-icon.icon-2 { background: var(--gradient-2); }
+        .feature-icon.icon-3 { background: var(--gradient-3); }
+        .feature-icon.icon-4 { background: var(--gradient-4); }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-desc {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .popular-stocks {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-2);
+            margin-bottom: 3rem;
+        }
+
+        .popular-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .stock-btn {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin: 5px;
+            font-weight: 500;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stock-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .error-alert {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: var(--shadow-2);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: var(--secondary-color);
+        }
+
+        .loading .spinner {
+            animation: spin 1s linear infinite;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-text {
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .search-container {
+                margin: -1rem 1rem 2rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>
+                StockScope Pro
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">📈 StockScope Pro</h1>
+            <p class="hero-subtitle">Professional Stock Analysis & Real-time Market Intelligence</p>
+            <p class="mb-0">Get comprehensive insights, technical analysis, and financial metrics for any publicly traded company</p>
+        </div>
+    </div>
+
+    <!-- Search Container -->
+    <div class="container">
+        <div class="search-container">
+            <h3 class="search-title">
+                <i class="fas fa-search me-2"></i>
+                Analyze Any Stock
+            </h3>
+
+            {% if error %}
+            <div class="alert alert-danger error-alert" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/analyze" id="analyzeForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label for="ticker" class="form-label fw-semibold">Stock Ticker Symbol</label>
+                        <input type="text" 
+                               class="form-control ticker-input" 
+                               id="ticker" 
+                               name="ticker" 
+                               placeholder="Enter ticker (e.g., AAPL, TSLA, RELIANCE.NS)" 
+                               required
+                               autocomplete="off">
+                        <div class="form-text">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                For Indian stocks: Add .NS for NSE or .BO for BSE (e.g., TCS.NS)
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn analyze-btn w-100">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Analyze Stock
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="loading" id="loadingDiv">
+                <div class="spinner">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <p>Fetching and analyzing stock data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Stocks -->
+    <div class="container">
+        <div class="popular-stocks">
+            <h3 class="popular-title">
+                <i class="fas fa-star me-2"></i>
+                Popular Stocks
+            </h3>
+            <div class="text-center">
+                <div class="mb-3">
+                    <strong class="text-muted">🇺🇸 US Markets:</strong>
+                    <button class="stock-btn" onclick="quickAnalyze('AAPL')">AAPL</button>
+                    <button class="stock-btn" onclick="quickAnalyze('TSLA')">TSLA</button>
+                    <button class="stock-btn" onclick="quickAnalyze('GOOGL')">GOOGL</button>
+                    <button class="stock-btn" onclick="quickAnalyze('AMZN')">AMZN</button>
+                    <button class="stock-btn" onclick="quickAnalyze('MSFT')">MSFT</button>
+                    <button class="stock-btn" onclick="quickAnalyze('META')">META</button>
+                    <button class="stock-btn" onclick="quickAnalyze('NVDA')">NVDA</button>
+                </div>
+                <div>
+                    <strong class="text-muted">🇮🇳 Indian Markets:</strong>
+                    <button class="stock-btn" onclick="quickAnalyze('RELIANCE.NS')">RELIANCE</button>
+                    <button class="stock-btn" onclick="quickAnalyze('TCS.NS')">TCS</button>
+                    <button class="stock-btn" onclick="quickAnalyze('INFY.NS')">INFOSYS</button>
+                    <button class="stock-btn" onclick="quickAnalyze('HDFCBANK.NS')">HDFC BANK</button>
+                    <button class="stock-btn" onclick="quickAnalyze('ITC.NS')">ITC</button>
+                    <button class="stock-btn" onclick="quickAnalyze('WIPRO.NS')">WIPRO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-1">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="feature-title">Real-time Data</h4>
+                        <p class="feature-desc">Get up-to-date stock prices, market data, and financial metrics from global exchanges.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-2">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h4 class="feature-title">Financial Analysis</h4>
+                        <p class="feature-desc">Comprehensive ratio analysis including ROE, ROCE, P/E, and other key financial indicators.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-3">
+                            <i class="fas fa-chart-area"></i>
+                        </div>
+                        <h4 class="feature-title">Interactive Charts</h4>
+                        <p class="feature-desc">Beautiful, interactive price charts with moving averages and technical indicators.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon icon-4">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="feature-title">Smart Insights</h4>
+                        <p class="feature-desc">AI-powered analysis providing intelligent pros & cons based on financial performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">
+                <i class="fas fa-chart-line me-2"></i>
+                StockScope Pro - Professional Stock Analysis Dashboard
+            </p>
+            <p class="footer-text mt-2">
+                <small>Data provided by Yahoo Finance. For educational and informational purposes only.</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Form submission with loading animation
+        document.getElementById('analyzeForm').addEventListener('submit', function(e) {
+            const submitBtn = document.querySelector('.analyze-btn');
+            const loadingDiv = document.getElementById('loadingDiv');
+
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...';
+            submitBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+        });
+
+        // Quick analyze function
+        function quickAnalyze(ticker) {
+            document.getElementById('ticker').value = ticker;
+            document.getElementById('analyzeForm').submit();
+        }
+
+        // Input formatting
+        document.getElementById('ticker').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+    </script>
+</body>
+</html>

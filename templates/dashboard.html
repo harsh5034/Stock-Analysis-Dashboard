@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ stock_info.name }} Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f6f9; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 2px 8px rgba(0,0,0,0.2);}
+        h1 { color: #2c3e50; text-align:center; margin-bottom:30px; }
+
+        /* Company Overview */
+        .overview { 
+            margin-bottom:30px; 
+            padding:20px; 
+            background:#fdfdfd; 
+            border-left:5px solid #2c3e50; 
+            border-radius:8px;
+        }
+        .overview h2 { margin-bottom:10px; }
+        .overview p { margin:5px 0; color:#444; }
+        .overview a { color:#3498db; text-decoration:none; }
+
+        /* Stock Info Grid */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin: 20px 0; 
+        }
+        .card { 
+            background: #f9fbfd; 
+            border-radius: 8px; 
+            padding: 15px; 
+            text-align: center; 
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1); 
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-4px); }
+        .card h3 { margin: 5px 0; font-size: 14px; color:#555; }
+        .card p { font-size: 1.2rem; font-weight:bold; color:#2c3e50; }
+
+        /* Chart & Prediction */
+        .chart { margin-top: 30px; }
+        .prediction-card { 
+            margin-top: 30px; 
+            padding: 20px; 
+            background: #eaf7ff; 
+            border-left: 5px solid #3498db; 
+            border-radius: 8px; 
+            text-align:center;
+        }
+        .prediction-card h3 { margin-bottom: 10px; color:#2c3e50; }
+        .prediction-card p { font-size: 1.4rem; font-weight: bold; color:#e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ stock_info.name }} ({{ stock_info.symbol }})</h1>
+
+        <!-- Company Overview -->
+        <div class="overview">
+            <h2>🏢 Company Overview</h2>
+            <p><b>Sector:</b> {{ stock_info.sector }}</p>
+            <p><b>Industry:</b> {{ stock_info.industry }}</p>
+            <p><b>Country:</b> {{ stock_info.country }}</p>
+            <p><b>Website:</b> 
+                {% if stock_info.website != "N/A" %}
+                    <a href="{{ stock_info.website }}" target="_blank">{{ stock_info.website }}</a>
+                {% else %} N/A {% endif %}
+            </p>
+            <p style="margin-top:15px; color:#555;">{{ stock_info.summary }}</p>
+        </div>
+
+        <!-- Stock Info in Attractive Cards -->
+        <div class="info-grid">
+            <div class="card"><h3>Current Price</h3><p>{{ stock_info.current_price }}</p></div>
+            <div class="card"><h3>Market Cap</h3><p>{{ stock_info.market_cap }}</p></div>
+            <div class="card"><h3>52 Week High</h3><p>{{ stock_info.high_52week }}</p></div>
+            <div class="card"><h3>52 Week Low</h3><p>{{ stock_info.low_52week }}</p></div>
+            <div class="card"><h3>Book Value</h3><p>{{ stock_info.book_value }}</p></div>
+            <div class="card"><h3>PE Ratio</h3><p>{{ stock_info.pe_ratio }}</p></div>
+            <div class="card"><h3>ROE</h3><p>{{ stock_info.roe }}</p></div>
+            <div class="card"><h3>ROCE</h3><p>{{ stock_info.roce }}</p></div>
+            <div class="card"><h3>Face Value</h3><p>{{ stock_info.face_value }}</p></div>
+        </div>
+
+        <!-- Actual Price Chart -->
+        <div class="chart">
+            <h2>Stock Price History</h2>
+            <div id="actual_chart"></div>
+            <script>
+                var actual_chart = {{ actual_chart|safe }};
+
+                {% if predicted_prices %}
+                var nextDay = new Date(actual_chart.data[0].x[actual_chart.data[0].x.length - 1]);
+                nextDay.setDate(nextDay.getDate() + 1);
+
+                actual_chart.data.push({
+                    x: [nextDay],
+                    y: [{{ predicted_prices[0] | round(2) }}],
+                    mode: "markers+text",
+                    name: "Predicted Price",
+                    marker: { color: "red", size: 10 },
+                    text: ["Predicted"],
+                    textposition: "top center"
+                });
+                {% endif %}
+
+                Plotly.newPlot("actual_chart", actual_chart.data, actual_chart.layout);
+            </script>
+        </div>
+
+        <!-- Prediction Card -->
+        {% if predicted_prices %}
+        <div class="prediction-card">
+            <h3>📈 LSTM Predicted Closing Price (Next Day)</h3>
+            <p>{{ predicted_prices[0] | round(2) }}</p>
+        </div>
+        {% endif %}
+
+        <a href="/" style="text-decoration:none; display:inline-block; margin-top:30px; padding:10px 20px; background:#3498db; color:white; border-radius:5px;">⬅ Back</a>
+    </div>
+</body>
+</html>
